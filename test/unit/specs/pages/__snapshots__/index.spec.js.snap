@@ -1,0 +1,60 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Index page renders to match snapshot 1`] = `
+<v-layout-stub tag="div" row="" wrap="">
+  <v-flex-stub tag="div" xs12="" md4="">
+    <v-card-stub tag="div">
+      <v-toolbar-stub card="true" scrollthreshold="300" dark="" color="primary">
+        <v-toolbar-title-stub>Add Product</v-toolbar-title-stub>
+        <v-spacer-stub></v-spacer-stub>
+        <v-btn-stub activeclass="v-btn--active" tag="button" type="button" color="white" light="">
+          Clear
+        </v-btn-stub>
+        <v-btn-stub activeclass="v-btn--active" tag="button" type="submit" color="accent">
+          Add
+        </v-btn-stub>
+      </v-toolbar-stub>
+      <v-card-text-stub>
+        <v-text-field-stub error-messages="" clearable="" label="Name" box="" required="" data-vv-as="Name" data-vv-name="name"></v-text-field-stub>
+        <v-text-field-stub error-messages="" clearable="" label="Quantity" box="" required="" min="0" data-vv-as="Quantity" data-vv-name="quantity" type="number"></v-text-field-stub>
+        <v-text-field-stub error-messages="" clearable="" label="Price" box="" required="" min="100" data-vv-as="Price" data-vv-name="price" type="number"></v-text-field-stub>
+        <v-dialog-stub persistent="true" fullwidth="true" maxwidth="none" origin="center center" width="290px" transition="dialog-transition" lazy="">
+          <v-text-field-stub error-messages="" clearable="" label="Expiration Date" box="" required="" data-vv-as="Expiration Date" data-vv-name="expirationDate" readonly=""></v-text-field-stub>
+          <v-date-picker-stub eventcolor="warning" firstdayofweek="0" locale="en-us" nexticon="$vuetify.icons.next" previcon="$vuetify.icons.prev" scrollable="true" showcurrent="true" type="date">
+            <v-spacer-stub></v-spacer-stub>
+            <v-btn-stub activeclass="v-btn--active" flat="true" tag="button" type="button" color="primary">
+              Cancel
+            </v-btn-stub>
+            <v-btn-stub activeclass="v-btn--active" flat="true" tag="button" type="button" color="primary">
+              OK
+            </v-btn-stub>
+          </v-date-picker-stub>
+        </v-dialog-stub>
+      </v-card-text-stub>
+    </v-card-stub>
+  </v-flex-stub>
+  <v-flex-stub tag="div" xs12="" md8="">
+    <v-card-stub tag="div">
+      <v-toolbar-stub card="true" scrollthreshold="300" dark="" color="primary">
+        <v-toolbar-title-stub>Product List</v-toolbar-title-stub>
+        <v-spacer-stub></v-spacer-stub>
+        <v-text-field-stub label="Search..." flat="" light="" solo="" hide-details=""></v-text-field-stub>
+      </v-toolbar-stub>
+      <v-card-text-stub>
+        <v-data-table-stub headers="[object Object],[object Object],[object Object],[object Object],[object Object]" headertext="text" rowsperpagetext="$vuetify.dataTable.rowsPerPageText" customfilter="function _default(items, search, filter, headers) {
+                search = search.toString().toLowerCase();
+                if (search.trim() === '') return items;
+                var props = headers.map(function (h) {
+                    return h.value;
+                });
+                return items.filter(function (item) {
+                    return props.some(function (prop) {
+                        return filter(Object(_util_helpers__WEBPACK_IMPORTED_MODULE_7__[&quot;getObjectValueByPath&quot;])(item, prop, item[prop]), search);
+                    });
+                });
+            }" items="" item-key="_id"></v-data-table-stub>
+      </v-card-text-stub>
+    </v-card-stub>
+  </v-flex-stub>
+</v-layout-stub>
+`;

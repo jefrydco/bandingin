@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Default layout renders to match snapshot 1`] = `
+<v-app-stub id="app">
+  <v-content-stub tag="main">
+    <v-container-stub tag="div" fluid="" grid-list-xl="">
+      <v-layout-stub tag="div" row="" wrap="">
+        <v-flex-stub tag="div" xs12="">
+          <nuxt></nuxt>
+        </v-flex-stub>
+      </v-layout-stub>
+    </v-container-stub>
+  </v-content-stub>
+  <app-notif-stub></app-notif-stub>
+</v-app-stub>
+`;
