@@ -70,9 +70,10 @@ export default {
   // https://nuxtjs.org/api/configuration-plugins
   plugins: [
     "~/plugins/api",
-    "~/plugins/component",
+    "~/plugins/components",
     "~/plugins/vuetify",
-    "~/plugins/vee-validate"
+    "~/plugins/vee-validate",
+    "~/plugins/components.client"
   ],
 
   // https://nuxtjs.org/api/configuration-css

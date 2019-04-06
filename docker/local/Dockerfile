@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Install app dependencies
 # Install yarn and other dependencies via apk
-# RUN apk update && apk add yarn python g++ make && rm -rf /var/cache/apk/*
+RUN apk update && apk add yarn python g++ make && rm -rf /var/cache/apk/*
 
 # COPY package.json /app/
 # COPY yarn.lock /app/

@@ -59,6 +59,7 @@
     "nuxt-webfontloader": "^1.0.0",
     "qs": "^6.6.0",
     "vee-validate": "^2.1.5",
+    "vue-web-cam": "^1.4.4",
     "vuejs-logger": "^1.5.3",
     "vuetify": "^1.4.2",
     "vuetify-loader": "^1.1.1"

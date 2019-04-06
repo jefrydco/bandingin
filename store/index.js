@@ -1,29 +1,25 @@
 export const types = {
-  SET_NOTIF: "SET_NOTIF"
+  SET_EXAMPLE_STATE: "SET_EXAMPLE_STATE"
 };
 
 export const state = () => ({
-  notif: {
-    text: null,
-    color: null
-  }
+  exampleState: null
 });
 
 export const getters = {
-  isNotif: state => state.notif.text !== null && state.notif.color !== null
+  getExampleState(state) {
+    return state.exampleState;
+  }
 };
 
 export const mutations = {
-  [types.SET_NOTIF]: (state, { text, color }) => {
-    state.notif = {
-      text,
-      color
-    };
+  [types.SET_EXAMPLE_STATE](state, payload) {
+    state.exampleState = payload;
   }
 };
 
 export const actions = {
-  exampleActions({ commit }, payload) {
+  [types.SET_EXAMPLE_STATE]({ commit }, payload) {
     commit(types.SET_EXAMPLE_STATE, payload);
   }
 };
