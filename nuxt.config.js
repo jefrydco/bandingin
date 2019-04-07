@@ -10,9 +10,9 @@ export default {
   head: {
     titleTemplate(title) {
       if (title) {
-        return `${title} - Nuxt PWA Vuetify`;
+        return `${title} - Bandingin`;
       }
-      return "Nuxt PWA Vuetify";
+      return "Bandingin";
     },
     meta: [
       { charset: "utf-8" },
@@ -56,6 +56,24 @@ export default {
     //   }
     // ],
   ],
+
+  meta: {
+    name: "Bandingin",
+    description:
+      "Bandingin aggregates products from different e-commerce and compare its price",
+    theme_color: "#90CAF9"
+  },
+
+  manifest: {
+    name: "Bandingin",
+    short_name: "Bandingin",
+    start_url: "/?utm_source=homescreen",
+    description:
+      "Bandingin aggregates products from different e-commerce and compare its price",
+    lang: "id",
+    theme_color: "#90CAF9",
+    background_color: "#fff"
+  },
 
   axios: {
     baseURL: "http://localhost:3000/api"

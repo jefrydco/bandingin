@@ -1,25 +1,17 @@
 export const types = {
-  SET_EXAMPLE_STATE: "SET_EXAMPLE_STATE"
+  SET_IMG: "SET_IMG"
 };
 
 export const state = () => ({
-  exampleState: null
+  img: null
 });
 
-export const getters = {
-  getExampleState(state) {
-    return state.exampleState;
-  }
-};
+export const getters = {};
 
 export const mutations = {
-  [types.SET_EXAMPLE_STATE](state, payload) {
-    state.exampleState = payload;
+  [types.SET_IMG](state, payload) {
+    state.img = payload;
   }
 };
 
-export const actions = {
-  [types.SET_EXAMPLE_STATE]({ commit }, payload) {
-    commit(types.SET_EXAMPLE_STATE, payload);
-  }
-};
+export const actions = {};

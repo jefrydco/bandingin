@@ -1,8 +1,8 @@
 {
-  "name": "nuxt-pwa-vuetify-starter",
+  "name": "bandingin",
   "version": "1.0.0",
   "private": true,
-  "description": "Nuxt.js + PWA + Vuetify.js starter project",
+  "description": "Bandingin aggregates products from different e-commerce and compare its price",
   "keywords": [
     "nuxt",
     "nuxt pwa",
@@ -18,10 +18,10 @@
     "vuetify.js",
     "vuetifyjs"
   ],
-  "homepage": "https://github.com/jefrydco/nuxt-pwa-vuetify-starter#readme",
+  "homepage": "https://github.com/jefrydco/bandingin#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jefrydco/nuxt-pwa-vuetify-starter"
+    "url": "git+https://github.com/jefrydco/bandingin"
   },
   "license": "MIT",
   "author": {
@@ -51,6 +51,8 @@
     "@nuxtjs/sitemap": "^0.1.2",
     "body-parser": "^1.18.3",
     "express": "^4.16.4",
+    "is-jpg": "^2.0.0",
+    "is-png": "^1.1.0",
     "lru-cache": "^4.1.5",
     "moment": "^2.23.0",
     "mongoose": "^5.4.5",
