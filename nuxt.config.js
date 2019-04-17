@@ -2,9 +2,11 @@ import nodeExternals from "webpack-node-externals";
 import VuetifyLoaderPlugin from "vuetify-loader/lib/plugin";
 require("dotenv").config();
 
+const isDev = process.env.NODE_ENV !== "production";
+
 export default {
   // https://nuxtjs.org/api/configuration-modern
-  modern: true,
+  modern: !isDev,
 
   // https://nuxtjs.org/api/configuration-head
   head: {

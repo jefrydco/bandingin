@@ -60,6 +60,7 @@
     "nuxt": "^2.3.4",
     "nuxt-webfontloader": "^1.0.0",
     "qs": "^6.6.0",
+    "scrape-it": "^5.1.4",
     "vee-validate": "^2.1.5",
     "vue-web-cam": "^1.4.4",
     "vuejs-logger": "^1.5.3",
@@ -93,9 +94,7 @@
     "jest-serializer-vue": "^2.0.2",
     "jest-transform-stub": "^1.0.0",
     "lint-staged": "^8.1.0",
-    "node-sass": "^4.11.0",
     "prettier": "^1.15.3",
-    "sass-loader": "^7.1.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "vue-jest": "^3.0.2"

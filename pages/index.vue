@@ -111,7 +111,6 @@ import { types } from "~/store";
 export default {
   data() {
     return {
-      // img: "/icon.png",
       camera: null,
       deviceId: null,
       devices: []
@@ -136,7 +135,6 @@ export default {
     //     /^data:image\/(png|jpg|jpeg);base64,/,
     //     ""
     //   );
-    //   console.log("On Image Changed", base64String);
     //   this.$axios.setHeader("Content-Type", "application/json", ["post"]);
     //   const { responses } = await this.$axios.$post(
     //     "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyBjYJmRSSbtHdJZ9HCb5PW26dLyXD41rZw",

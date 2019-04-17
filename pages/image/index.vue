@@ -33,6 +33,14 @@ export default {
       set(img) {
         this.$store.commit(types.SET_IMG, img);
       }
+    },
+    imgLabel: {
+      get() {
+        return this.$store.state.imgLabel;
+      },
+      set(imgLabel) {
+        this.$store.commit(types.SET_IMG_LABEL, imgLabel);
+      }
     }
   },
   mounted() {
@@ -47,7 +55,42 @@ export default {
     onRetake() {
       this.$router.replace({ name: "index" });
     },
-    onChoose() {}
+    async onChoose() {
+      const img = this.img;
+      const base64String = img.replace(
+        /^data:image\/(png|jpg|jpeg);base64,/,
+        ""
+      );
+      this.$axios.setHeader("Content-Type", "application/json", ["post"]);
+      try {
+        const { responses } = await this.$axios.$post(
+          "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyB5gwh0vSoNiFCSlRD7X_U032goTVe42ZQ",
+          {
+            requests: [
+              {
+                image: {
+                  content: base64String
+                },
+                features: [
+                  {
+                    type: "LABEL_DETECTION",
+                    maxResults: 10
+                  }
+                ]
+              }
+            ]
+          }
+        );
+        if (responses.length > 0) {
+          const { labelAnnotations } = responses[0];
+          console.log("On Image Label Detected", labelAnnotations);
+          this.imgLabel = labelAnnotations;
+          this.$router.push({ name: "image-result" });
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
   }
 };
 </script>
