@@ -78,7 +78,11 @@ export default {
   },
 
   axios: {
-    baseURL: "http://localhost:3000/api"
+    proxy: true
+  },
+
+  proxy: {
+    "/api/": "http://localhost:3000/api"
   },
 
   webfontloader: {

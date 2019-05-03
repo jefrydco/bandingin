@@ -88,7 +88,7 @@ export default {
   methods: {
     async getProducts(keyword) {
       const { data } = await this.$axios.$get(
-        `http://localhost:3000/api/bukalapak?keyword=${keyword}`
+        `/api/bukalapak?keyword=${keyword}`
       );
       this.products = await data.products.map(product => ({
         ...product,
