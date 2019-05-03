@@ -85,6 +85,9 @@ export default {
       immediate: true
     }
   },
+  mounted() {
+    this.products = [];
+  },
   methods: {
     async getProducts(keyword) {
       const { data } = await this.$axios.$get(
