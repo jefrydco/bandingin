@@ -84,7 +84,25 @@ export default {
         if (responses.length > 0) {
           const { labelAnnotations } = responses[0];
           console.log("On Image Label Detected", labelAnnotations);
-          this.imgLabel = labelAnnotations;
+          const translationResult = await Promise.all(
+            labelAnnotations.map(async label => {
+              const { data } = await this.$axios.$post(
+                "https://translation.googleapis.com/language/translate/v2?key=AIzaSyB5gwh0vSoNiFCSlRD7X_U032goTVe42ZQ",
+                {
+                  q: label.description,
+                  source: "en",
+                  target: "id",
+                  format: "text"
+                }
+              );
+              return {
+                ...label,
+                translations: data.translations
+              };
+            })
+          );
+          console.log("Translation Result", translationResult);
+          this.imgLabel = translationResult;
           this.$router.push({ name: "image-result" });
         }
       } catch (error) {

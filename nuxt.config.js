@@ -97,7 +97,7 @@ export default {
   ],
 
   // https://nuxtjs.org/api/configuration-css
-  css: ["~/assets/styles/vuetify"],
+  css: ["@mdi/font/css/materialdesignicons.css", "~/assets/styles/vuetify"],
 
   // https://nuxtjs.org/api/configuration-watch
   watch: ["~/server/**/*.js", "~/mixins/**/*.js"],
@@ -106,7 +106,7 @@ export default {
 
   // https://nuxtjs.org/api/configuration-build
   build: {
-    extractCSS: true,
+    extractCSS: !isDev,
     transpile: [/^vuetify/],
     plugins: [new VuetifyLoaderPlugin()],
     extend(config, { isDev, isClient }) {

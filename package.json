@@ -62,6 +62,7 @@
     "qs": "^6.6.0",
     "scrape-it": "^5.1.4",
     "vee-validate": "^2.1.5",
+    "vue-friendly-iframe": "^0.12.0",
     "vue-web-cam": "^1.4.4",
     "vuejs-logger": "^1.5.3",
     "vuetify": "^1.4.2",
