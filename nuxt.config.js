@@ -104,9 +104,9 @@ export default {
   css: ["@mdi/font/css/materialdesignicons.css", "~/assets/styles/vuetify"],
 
   // https://nuxtjs.org/api/configuration-watch
-  watch: ["~/server/**/*.js", "~/mixins/**/*.js"],
+  watch: ["~/api/**/*.js", "~/mixins/**/*.js"],
 
-  serverMiddleware: ["~/server/index"],
+  serverMiddleware: ["~/api/index"],
 
   // https://nuxtjs.org/api/configuration-build
   build: {

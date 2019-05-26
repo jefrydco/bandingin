@@ -40,6 +40,23 @@
         <v-progress-circular indeterminate="" color="primary" />
       </v-layout>
     </template>
+    <v-footer app="" fixed="" height="auto">
+      <v-container fluid="" grid-list-xl="">
+        <v-layout row="" wrap="">
+          <v-flex xs12="">
+            <v-text-field
+              v-model="keyword"
+              label="Kata Kunci"
+              solo-inverted=""
+              flat=""
+              hide-details=""
+              append-icon="mdi-magnify"
+              @click:append="onSearch"
+            />
+          </v-flex>
+        </v-layout>
+      </v-container>
+    </v-footer>
   </v-layout>
 </template>
 
@@ -47,6 +64,11 @@
 import { types } from "~/store";
 
 export default {
+  data() {
+    return {
+      keyword: ""
+    };
+  },
   computed: {
     imgLabel: {
       get() {
@@ -78,8 +100,11 @@ export default {
       handler(imgLabel) {
         if (imgLabel.length > 0) {
           // eslint-disable-next-line
-          const [keyword, ...rest] = imgLabel;
-          this.getProducts(keyword.translations[0].translatedText);
+          const [keyword, secondKeyword, ...rest] = imgLabel;
+          const kw = `${keyword.description} & ${secondKeyword.description}`;
+          this.getProducts(kw);
+          // this.getProducts(keyword.translations[0].translatedText);
+          this.keyword = kw;
         }
       },
       immediate: true
@@ -101,6 +126,10 @@ export default {
     onCardClicked(product) {
       this.selectedProduct = product;
       this.$router.push({ name: "image-iframe" });
+    },
+    onSearch() {
+      this.products = [];
+      this.getProducts(this.keyword);
     }
   }
 };

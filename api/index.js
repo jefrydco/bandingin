@@ -3,8 +3,9 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 // import mongoose from "mongoose";
 
-import products from "./routes/products";
+// import products from "./routes/products";
 import bukalapak from "./routes/bukalapak";
+import tokopedia from "./routes/tokopedia";
 
 const app = express();
 // mongoose.connect(
@@ -17,8 +18,9 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("combined"));
-app.use(products);
+// app.use(products);
 app.use(bukalapak);
+app.use(tokopedia);
 
 export default {
   path: "/api",

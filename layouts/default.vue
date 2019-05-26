@@ -1,10 +1,15 @@
 <template>
   <v-app>
-    <v-toolbar app="" dark="" color="primary">
+    <v-toolbar fixed="" app="" dark="" color="primary">
       <v-btn icon="" @click="$router.go(-1)">
         <v-icon>mdi-chevron-left</v-icon>
       </v-btn>
-      <v-toolbar-title>Banding Harga</v-toolbar-title>
+      <v-toolbar-title
+        style="cursor: pointer"
+        @click="$router.push({ name: 'index' })"
+      >
+        Banding Harga
+      </v-toolbar-title>
     </v-toolbar>
     <v-content>
       <v-container fluid="" grid-list-xl="">
