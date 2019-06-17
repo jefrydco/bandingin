@@ -1,75 +1,178 @@
 <template>
-  <v-layout row="" wrap="">
-    <template v-if="products.length > 0">
-      <v-flex v-for="(product, i) in products" :key="`product_${i}`" xs6="">
-        <v-card ripple="" @click="onCardClicked(product)">
-          <v-img :src="product.image" :aspect-ratio="1" class="grey lighten-2">
-            <template #placeholder="">
-              <v-layout
-                fill-height=""
-                align-center=""
-                justify-center=""
-                ma-0=""
-              >
-                <v-progress-circular indeterminate="" color="grey lighten-5" />
-              </v-layout>
-            </template>
-          </v-img>
-          <v-responsive :aspect-ratio="3 / 4">
-            <v-card-text>
-              <div class="mb-3">{{ product.name }}</div>
-              <div>Rp. {{ product.price }}</div>
-            </v-card-text>
-          </v-responsive>
-        </v-card>
-        <!-- <ol>
-        <li v-for="(label, i) in imgLabel" :key="`label_${label.mid}_${i}`">
-          {{ label.translations[0].translatedText }} - {{ label.score }}
-        </li>
-      </ol> -->
-      </v-flex>
-    </template>
-    <template v-else="">
-      <v-layout
-        class="mt-3"
-        fill-height=""
-        align-center=""
-        justify-center=""
-        ma-0=""
-      >
-        <v-progress-circular indeterminate="" color="primary" />
-      </v-layout>
-    </template>
-    <v-footer app="" fixed="" height="auto">
-      <v-container fluid="" grid-list-xl="">
-        <v-layout row="" wrap="">
-          <v-flex xs12="">
-            <v-text-field
-              v-model="keyword"
-              label="Kata Kunci"
-              solo-inverted=""
-              flat=""
-              hide-details=""
-              append-icon="mdi-magnify"
-              @click:append="onSearch"
-            />
-          </v-flex>
+  <app-container>
+    <v-layout row="" wrap="">
+      <template v-if="products.length > 0">
+        <v-flex v-for="(product, i) in products" :key="`product_${i}`" xs6="">
+          <v-card ripple="" @click="onCardClicked(product)">
+            <v-img
+              :src="product.image"
+              :aspect-ratio="1"
+              class="grey lighten-2"
+            >
+              <template #placeholder="">
+                <v-layout
+                  fill-height=""
+                  align-center=""
+                  justify-center=""
+                  ma-0=""
+                >
+                  <v-progress-circular
+                    indeterminate=""
+                    color="grey lighten-5"
+                  />
+                </v-layout>
+              </template>
+            </v-img>
+            <v-responsive :aspect-ratio="1">
+              <v-card-text>
+                <h2 class="subheading" style="height: 100px">
+                  {{ truncate(product.name, 30) }}
+                </h2>
+                <div>Rp. {{ product.price }}</div>
+              </v-card-text>
+            </v-responsive>
+          </v-card>
+        </v-flex>
+      </template>
+      <template v-if="products.length === 0 && !isLoading">
+        <v-alert :value="true" color="primary">
+          Maaf barang yang Anda cari tidak ditemukan di ecommerce manapun, mohon
+          coba lagi dengan gambar atau kata kunci lain.
+        </v-alert>
+      </template>
+      <template v-if="isLoading">
+        <v-layout
+          class="mt-3"
+          fill-height=""
+          align-center=""
+          justify-center=""
+          ma-0=""
+        >
+          <v-progress-circular indeterminate="" color="primary" />
         </v-layout>
-      </v-container>
-    </v-footer>
-  </v-layout>
+      </template>
+      <v-footer class="v-footer--custom" app="" fixed="" height="auto">
+        <v-container fluid="" grid-list-xl="">
+          <v-layout row="" wrap="">
+            <v-flex xs12="">
+              <v-text-field
+                v-model="keyword"
+                :disabled="isLoading"
+                label="Kata Kunci"
+                solo-inverted=""
+                flat=""
+                hide-details=""
+                append-icon="search"
+                @click:append="onSearch"
+              />
+            </v-flex>
+          </v-layout>
+        </v-container>
+      </v-footer>
+      <v-dialog
+        v-model="isFilterDialog"
+        fullscreen=""
+        hide-overlay=""
+        transition="dialog-bottom-transition"
+      >
+        <template #activator="{ on }">
+          <v-btn
+            :disabled="isLoading"
+            :loading="isLoading"
+            class="v-btn--bottom--custom"
+            fab=""
+            fixed=""
+            bottom=""
+            right=""
+            color="accent"
+            v-on="on"
+          >
+            <v-icon>filter_list</v-icon>
+          </v-btn>
+        </template>
+        <v-card>
+          <v-toolbar dark="" card="" color="primary">
+            <v-btn icon="" @click="isFilterDialog = false">
+              <v-icon>chevron_left</v-icon>
+            </v-btn>
+            <v-toolbar-title>Filter</v-toolbar-title>
+          </v-toolbar>
+          <v-card-text>
+            <v-container fluid="" grid-list-xl="">
+              <v-layout row="" wrap="">
+                <v-flex xs12="">
+                  <v-text-field
+                    v-model="keyword"
+                    clearable=""
+                    label="Kata Kunci"
+                    solo-inverted=""
+                    flat=""
+                    hide-details=""
+                    append-icon="search"
+                    @click:append="onSearch"
+                  />
+                </v-flex>
+              </v-layout>
+              <v-layout row="" wrap="">
+                <v-flex xs12="">
+                  <v-autocomplete
+                    v-model="selectedCategory"
+                    :items="categories"
+                    clearable=""
+                    item-text="name"
+                    return-object=""
+                    label="Kategori"
+                    solo-inverted=""
+                    flat=""
+                    hide-details=""
+                  />
+                </v-flex>
+              </v-layout>
+              <v-layout row="" wrap="">
+                <v-flex xs12="">
+                  <v-autocomplete
+                    v-model="selectedSort"
+                    :items="sortList"
+                    clearable=""
+                    label="Urutkan"
+                    solo-inverted=""
+                    flat=""
+                    hide-details=""
+                  />
+                </v-flex>
+              </v-layout>
+              <v-layout row="" wrap="">
+                <v-flex xs12="" class="text-xs-center">
+                  <v-btn color="primary" @click="onApplyFilter">Terapkan</v-btn>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-card-text>
+        </v-card>
+      </v-dialog>
+    </v-layout>
+  </app-container>
 </template>
 
 <script>
+import { mapState } from "vuex";
+import qs from "qs";
+import truncate from "truncate";
 import { types } from "~/store";
 
 export default {
   data() {
     return {
-      keyword: ""
+      isLoading: false,
+      keyword: "",
+      sortList: [
+        { text: "Termurah", value: "price:asc" },
+        { text: "Termahal", value: "price:desc" }
+      ]
     };
   },
   computed: {
+    ...mapState(["categories"]),
     imgLabel: {
       get() {
         return this.$store.state.imgLabel;
@@ -93,6 +196,30 @@ export default {
       set(selectedProduct) {
         this.$store.commit(types.SET_SELECTED_PRODUCT, selectedProduct);
       }
+    },
+    selectedCategory: {
+      get() {
+        return this.$store.state.selectedCategory;
+      },
+      set(selectedCategory) {
+        this.$store.commit(types.SET_SELECTED_CATEGORY, selectedCategory);
+      }
+    },
+    isFilterDialog: {
+      get() {
+        return this.$store.state.isFilterDialog;
+      },
+      set(isFilterDialog) {
+        this.$store.commit(types.SET_FILTER_DIALOG, isFilterDialog);
+      }
+    },
+    selectedSort: {
+      get() {
+        return this.$store.state.selectedSort;
+      },
+      set(selectedSort) {
+        this.$store.commit(types.SET_SELECTED_SORT, selectedSort);
+      }
     }
   },
   watch: {
@@ -102,7 +229,10 @@ export default {
           // eslint-disable-next-line
           const [keyword, secondKeyword, ...rest] = imgLabel;
           const kw = `${keyword.description} & ${secondKeyword.description}`;
-          this.getProducts(kw);
+          this.getProducts({
+            category: this.selectedCategory ? this.selectedCategory.value : "",
+            keyword: kw.toLowerCase()
+          });
           // this.getProducts(keyword.translations[0].translatedText);
           this.keyword = kw;
         }
@@ -112,16 +242,34 @@ export default {
   },
   mounted() {
     this.products = [];
+    this.init();
   },
   methods: {
+    init() {
+      if (this.imgLabel.length === 0) {
+        this.$router.replace({ name: "index" });
+      }
+    },
+    truncate(string, maxLength) {
+      if (!string) {
+        return null;
+      }
+      string = string.toString();
+      return truncate(string, maxLength);
+    },
     async getProducts(keyword) {
-      const { data } = await this.$axios.$get(
-        `/api/bukalapak?keyword=${keyword}`
-      );
-      this.products = await data.products.map(product => ({
-        ...product,
-        link: `https://www.bukalapak.com${product.link}`
-      }));
+      try {
+        this.isLoading = true;
+        const queryString = qs.stringify(keyword);
+        const {
+          data: { products = [] }
+        } = await this.$http.$get(`bukalapak?${queryString}`);
+        this.products = products;
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.isLoading = false;
+      }
     },
     onCardClicked(product) {
       this.selectedProduct = product;
@@ -129,8 +277,23 @@ export default {
     },
     onSearch() {
       this.products = [];
-      this.getProducts(this.keyword);
+      this.getProducts({
+        category: this.selectedCategory ? this.selectedCategory.value : "",
+        keyword: this.keyword.toLowerCase(),
+        sort_by: this.selectedSort
+      });
+    },
+    onApplyFilter() {
+      // https://www.bukalapak.com/products/?search%5Bassurance%5D=0&search%5Bbrand%5D=0&search%5Bcity%5D=&search%5Bfree_shipping_coverage%5D=&search%5Binstallment%5D=0&search%5Bkeyword%5D=headphones&search%5Bkeywords%5D=headphones&search%5Bnew%5D=1&search%5Bpremium_seller%5D=0&search%5Bprice_max%5D=&search%5Bprice_min%5D=&search%5Bprovince%5D=&search%5Brating_gte%5D=0&search%5Brating_lte%5D=5&search%5Bsort_by%5D=price%3Aasc&search%5Btodays_deal%5D=0&search%5Btop_seller%5D=0&search%5Bused%5D=1&search%5Bwholesale%5D=0&&
+      this.isFilterDialog = false;
+      this.onSearch();
     }
   }
 };
 </script>
+
+<style>
+.v-btn--bottom--custom:not(.v-btn--absolute) {
+  bottom: 144px;
+}
+</style>

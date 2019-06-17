@@ -1,8 +1,9 @@
-import { Router } from "express";
-import bukalapak from "../controllers/bukalapak";
+const { Router } = require("express");
+const bukalapak = require("../controllers/bukalapak");
 
 const router = Router();
 
 router.get("/bukalapak", bukalapak.index);
+router.get("/bukalapak/category", bukalapak.category);
 
-export default router;
+module.exports = router;

@@ -1,31 +1,70 @@
 <template>
-  <v-layout row="" wrap="">
-    <v-flex xs12="">
-      <v-layout row="" wrap="">
-        <v-flex xs12="">
-          <app-img :src="img" :aspect-ratio="3 / 4" alt="Choosen Image" />
-        </v-flex>
-      </v-layout>
-      <v-layout row="" wrap="" align-center="" justify-space-around="">
-        <v-btn icon="" large="" fab="" @click="onRetake">
-          <v-icon x-large="">mdi-refresh</v-icon>
-        </v-btn>
-        <v-btn icon="" large="" fab="" @click="onChoose">
-          <v-icon x-large="">mdi-check-circle-outline</v-icon>
-        </v-btn>
-      </v-layout>
-    </v-flex>
-  </v-layout>
+  <app-container>
+    <v-layout row="" wrap="">
+      <v-flex xs12="">
+        <v-layout row="" wrap="">
+          <v-flex xs12="">
+            <app-img :src="img" :aspect-ratio="4 / 3" alt="Choosen Image" />
+          </v-flex>
+        </v-layout>
+        <v-layout row="" wrap="" align-center="" justify-space-around="">
+          <v-btn
+            :disabled="isLoading"
+            :loading="isLoading"
+            icon=""
+            large=""
+            fab=""
+            @click="onRetake"
+          >
+            <v-icon x-large="">refresh</v-icon>
+          </v-btn>
+          <v-btn
+            :disabled="isLoading"
+            :loading="isLoading"
+            icon=""
+            large=""
+            fab=""
+            @click="onChoose"
+          >
+            <v-icon x-large="">check</v-icon>
+          </v-btn>
+        </v-layout>
+        <v-footer class="v-footer--custom" app="" fixed="" height="auto">
+          <v-container fluid="" grid-list-xl="">
+            <v-layout row="" wrap="">
+              <v-flex xs12="">
+                <v-autocomplete
+                  v-model="selectedCategory"
+                  :items="categories"
+                  clearable=""
+                  item-text="name"
+                  return-object=""
+                  label="Kategori"
+                  solo-inverted=""
+                  flat=""
+                  hide-details=""
+                />
+              </v-flex>
+            </v-layout>
+          </v-container>
+        </v-footer>
+      </v-flex>
+    </v-layout>
+  </app-container>
 </template>
 
 <script>
+import { mapState } from "vuex";
 import { types } from "~/store";
 
 export default {
   data() {
-    return {};
+    return {
+      isLoading: false
+    };
   },
   computed: {
+    ...mapState(["categories"]),
     img: {
       get() {
         return this.$store.state.img;
@@ -40,6 +79,14 @@ export default {
       },
       set(imgLabel) {
         this.$store.commit(types.SET_IMG_LABEL, imgLabel);
+      }
+    },
+    selectedCategory: {
+      get() {
+        return this.$store.state.selectedCategory;
+      },
+      set(value) {
+        this.$store.commit(types.SET_SELECTED_CATEGORY, value);
       }
     }
   },
@@ -61,9 +108,10 @@ export default {
         /^data:image\/(png|jpg|jpeg);base64,/,
         ""
       );
-      this.$axios.setHeader("Content-Type", "application/json", ["post"]);
+      this.$http.setHeader("Content-Type", "application/json", ["post"]);
       try {
-        const { responses } = await this.$axios.$post(
+        this.isLoading = true;
+        const { responses } = await this.$http.$post(
           "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyB5gwh0vSoNiFCSlRD7X_U032goTVe42ZQ",
           {
             requests: [
@@ -86,7 +134,7 @@ export default {
           console.log("On Image Label Detected", labelAnnotations);
           const translationResult = await Promise.all(
             labelAnnotations.map(async label => {
-              const { data } = await this.$axios.$post(
+              const { data } = await this.$http.$post(
                 "https://translation.googleapis.com/language/translate/v2?key=AIzaSyB5gwh0vSoNiFCSlRD7X_U032goTVe42ZQ",
                 {
                   q: label.description,
@@ -107,6 +155,8 @@ export default {
         }
       } catch (error) {
         console.log(error);
+      } finally {
+        this.isLoading = false;
       }
     }
   }

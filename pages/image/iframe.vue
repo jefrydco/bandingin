@@ -1,12 +1,14 @@
 <template>
-  <v-layout row="" wrap="" fill-height="">
-    <v-flex xs12="" fill-height="">
-      <vue-friendly-iframe
-        v-if="selectedProduct !== null"
-        :src="selectedProduct.link"
-      />
-    </v-flex>
-  </v-layout>
+  <app-container fill-height="">
+    <v-layout row="" wrap="" fill-height="">
+      <v-flex xs12="" fill-height="">
+        <vue-friendly-iframe
+          v-if="selectedProduct !== null"
+          :src="selectedProduct.link"
+        />
+      </v-flex>
+    </v-layout>
+  </app-container>
 </template>
 
 <script>
@@ -24,6 +26,16 @@ export default {
       },
       set(selectedProduct) {
         this.$store.commit(types.SET_SELECTED_PRODUCT, selectedProduct);
+      }
+    }
+  },
+  mounted() {
+    this.init();
+  },
+  methods: {
+    init() {
+      if (this.selectedProduct === null) {
+        this.$router.replace({ name: "index" });
       }
     }
   }

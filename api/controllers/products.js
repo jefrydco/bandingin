@@ -1,4 +1,4 @@
-import Product from "../models/Product";
+const Product = require("../models/Product");
 
 const response = {
   error: false,
@@ -84,7 +84,7 @@ const remove = (req, res) => {
     );
 };
 
-export default {
+module.exports = {
   index,
   store,
   show,

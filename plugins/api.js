@@ -1,7 +1,7 @@
 import createRepo from "~/helpers/api";
 
-export default ({ $axios }, inject) => {
-  const createApi = createRepo($axios);
+export default ({ $http }, inject) => {
+  const createApi = createRepo($http);
 
   const apiList = {
     products: createApi("products")

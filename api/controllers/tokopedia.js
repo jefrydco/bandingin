@@ -1,4 +1,4 @@
-import scrapeIt from "scrape-it";
+const scrapeIt = require("scrape-it");
 
 // eslint-disable-next-line
 const response = {
@@ -32,6 +32,6 @@ const index = async (req, res) => {
   // });
 };
 
-export default {
+module.exports = {
   index
 };

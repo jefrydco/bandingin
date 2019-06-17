@@ -1,6 +1,5 @@
 import nodeExternals from "webpack-node-externals";
 import VuetifyLoaderPlugin from "vuetify-loader/lib/plugin";
-require("dotenv").config();
 
 const isDev = process.env.NODE_ENV !== "production";
 
@@ -12,9 +11,9 @@ export default {
   head: {
     titleTemplate(title) {
       if (title) {
-        return `${title} - Bandingin`;
+        return `${title} - Banding Harga`;
       }
-      return "Bandingin";
+      return "Banding Harga";
     },
     meta: [
       { charset: "utf-8" },
@@ -25,20 +24,11 @@ export default {
 
   // https://nuxtjs.org/api/configuration-modules
   modules: [
-    // https://axios.nuxtjs.org/
-    "@nuxtjs/axios",
-
-    // https://nuxtjs.org/faq/cached-components/
-    "@nuxtjs/component-cache",
-
-    // https://github.com/nuxt-community/dotenv-module
-    "@nuxtjs/dotenv",
+    // https://http.nuxtjs.org/
+    "@nuxt/http",
 
     // https://pwa.nuxtjs.org/
     "@nuxtjs/pwa",
-
-    // https://github.com/nuxt-community/sitemap-module
-    "@nuxtjs/sitemap",
 
     // https://github.com/nuxt-community/moment-module
     "@nuxtjs/moment",
@@ -60,30 +50,31 @@ export default {
   ],
 
   meta: {
-    name: "Bandingin",
+    name: "Banding Harga",
     description:
-      "Bandingin aggregates products from different e-commerce and compare its price",
+      "Banding Harga aggregates products from different e-commerce and compare its price",
     theme_color: "#90CAF9"
   },
 
   manifest: {
-    name: "Bandingin",
-    short_name: "Bandingin",
+    name: "Banding Harga",
+    short_name: "Banding Harga",
     start_url: "/?utm_source=homescreen",
     description:
-      "Bandingin aggregates products from different e-commerce and compare its price",
+      "Banding Harga aggregates products from different e-commerce and compare its price",
     lang: "id",
     theme_color: "#90CAF9",
     background_color: "#fff"
   },
 
-  axios: {
-    proxy: true
+  http: {
+    // proxy: true
+    baseURL: "http://localhost:3001/api"
   },
 
-  proxy: {
-    "/api/": "http://localhost:3000/api"
-  },
+  // proxy: {
+  //   "/api/": "http://localhost:3001/api"
+  // },
 
   webfontloader: {
     google: {
@@ -101,12 +92,12 @@ export default {
   ],
 
   // https://nuxtjs.org/api/configuration-css
-  css: ["@mdi/font/css/materialdesignicons.css", "~/assets/styles/vuetify"],
+  css: ["~/assets/styles/vuetify"],
 
   // https://nuxtjs.org/api/configuration-watch
-  watch: ["~/api/**/*.js", "~/mixins/**/*.js"],
+  watch: ["~/mixins/**/*.js"],
 
-  serverMiddleware: ["~/api/index"],
+  // serverMiddleware: ["~/api/index"],
 
   // https://nuxtjs.org/api/configuration-build
   build: {

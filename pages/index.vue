@@ -1,63 +1,65 @@
 <template>
-  <v-layout row="" wrap="">
-    <v-flex xs12="">
-      <v-layout row="" wrap="">
-        <v-flex xs12="">
-          <v-card flat="" dark="" color="black">
-            <v-card-text class="pa-0 fill-height">
-              <no-ssr>
-                <vue-web-cam
-                  ref="webcam"
-                  :device-id="deviceId"
-                  height="100%"
-                  width="100%"
-                  @started="onStarted"
-                  @stopped="onStopped"
-                  @error="onError"
-                  @cameras="onCameras"
-                  @camera-change="onCameraChange"
-                />
-              </no-ssr>
-            </v-card-text>
-          </v-card>
-          <v-select
-            :items="devices"
-            v-model="camera"
-            label="Devices"
-            item-text="label"
-            item-value="deviceId"
-            hide-details=""
-            solo=""
-            dark=""
-            color="black"
-          />
-        </v-flex>
-      </v-layout>
-      <v-layout row="" wrap="" align-center="" justify-space-around="">
-        <v-btn icon="" large="" fab="" @click="onChooseImage">
-          <v-icon x-large="">mdi-image</v-icon>
-        </v-btn>
-        <v-btn
-          icon=""
-          large=""
-          fab=""
-          color="primary"
-          @click="onCapture"
-        ></v-btn>
-        <v-btn icon="" large="" fab="">
-          <v-icon x-large="">mdi-view-dashboard</v-icon>
-        </v-btn>
-      </v-layout>
-      <!-- eslint-disable-next-line -->
-      <input
-        ref="file"
-        accept="image/*"
-        type="file"
-        style="display: none"
-        @change="onImageChoosed"
-      />
-    </v-flex>
-  </v-layout>
+  <app-container>
+    <v-layout row="" wrap="">
+      <v-flex xs12="">
+        <v-layout row="" wrap="">
+          <v-flex xs12="">
+            <v-card flat="" dark="" color="black">
+              <v-card-text class="pa-0 fill-height">
+                <no-ssr>
+                  <vue-web-cam
+                    ref="webcam"
+                    :device-id="deviceId"
+                    height="100%"
+                    width="100%"
+                    @started="onStarted"
+                    @stopped="onStopped"
+                    @error="onError"
+                    @cameras="onCameras"
+                    @camera-change="onCameraChange"
+                  />
+                </no-ssr>
+              </v-card-text>
+            </v-card>
+            <v-select
+              :items="devices"
+              v-model="camera"
+              label="Devices"
+              item-text="label"
+              item-value="deviceId"
+              hide-details=""
+              solo=""
+              dark=""
+              color="black"
+            />
+          </v-flex>
+        </v-layout>
+        <v-layout row="" wrap="" align-center="" justify-space-around="">
+          <v-btn icon="" large="" fab="" @click="onChooseImage">
+            <v-icon x-large="">collections</v-icon>
+          </v-btn>
+          <v-btn
+            icon=""
+            large=""
+            fab=""
+            color="primary"
+            @click="onCapture"
+          ></v-btn>
+          <v-btn icon="" large="" fab="">
+            <v-icon x-large="">history</v-icon>
+          </v-btn>
+        </v-layout>
+        <!-- eslint-disable-next-line -->
+        <input
+          ref="file"
+          accept="image/*"
+          type="file"
+          style="display: none"
+          @change="onImageChoosed"
+        />
+      </v-flex>
+    </v-layout>
+  </app-container>
   <!-- <v-container fluid="" grid-list-xl="">
     <v-layout row="" wrap="">
       <v-flex xs12="" sm6="">
@@ -105,7 +107,10 @@
 <script>
 import isPng from "is-png";
 import isJpg from "is-jpg";
+import { mapState } from "vuex";
 
+import { getImageFromCanvas, drawImage } from "~/utils/canvas";
+import { getBase64 } from "~/utils/files";
 import { types } from "~/store";
 
 export default {
@@ -117,6 +122,7 @@ export default {
     };
   },
   computed: {
+    ...mapState(["categories"]),
     device() {
       return this.devices.find(n => n.deviceId === this.deviceId);
     },
@@ -127,35 +133,17 @@ export default {
       set(img) {
         this.$store.commit(types.SET_IMG, img);
       }
+    },
+    selectedCategory: {
+      get() {
+        return this.$store.state.selectedCategory;
+      },
+      set(value) {
+        this.$store.commit(types.SET_SELECTED_CATEGORY, value);
+      }
     }
   },
   watch: {
-    // async img(img) {
-    //   const base64String = img.replace(
-    //     /^data:image\/(png|jpg|jpeg);base64,/,
-    //     ""
-    //   );
-    //   this.$axios.setHeader("Content-Type", "application/json", ["post"]);
-    //   const { responses } = await this.$axios.$post(
-    //     "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyBjYJmRSSbtHdJZ9HCb5PW26dLyXD41rZw",
-    //     {
-    //       requests: [
-    //         {
-    //           image: {
-    //             content: base64String
-    //           },
-    //           features: [
-    //             {
-    //               type: "LABEL_DETECTION",
-    //               maxResults: 3
-    //             }
-    //           ]
-    //         }
-    //       ]
-    //     }
-    //   );
-    //   console.log("On Image Label Detected", responses);
-    // },
     camera(id) {
       this.deviceId = id;
     },
@@ -180,8 +168,21 @@ export default {
       this.$refs.file.value = null;
     },
     onCapture() {
-      this.img = this.$refs.webcam.capture();
-      this.$router.push({ name: "image" });
+      const img = this.$refs.webcam.capture();
+      let flippedImg = null;
+      const canvasEl = document.createElement("canvas");
+      canvasEl.width = 720;
+      canvasEl.height = 540;
+      const ctx = canvasEl.getContext("2d");
+      const imgEl = document.createElement("img");
+      imgEl.onload = async () => {
+        drawImage(ctx, imgEl, 0, 0, 720, 540, 0, true, false);
+        flippedImg = await getImageFromCanvas(canvasEl);
+        const base64 = await getBase64(flippedImg);
+        this.img = base64;
+        await this.$router.push({ name: "image" });
+      };
+      imgEl.src = img;
     },
     onStarted(stream) {
       console.log("On Started Event", stream);
@@ -243,3 +244,9 @@ export default {
   }
 };
 </script>
+
+<style>
+video {
+  transform: scaleX(-1);
+}
+</style>

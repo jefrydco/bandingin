@@ -1,11 +1,30 @@
-import express from "express";
-import bodyParser from "body-parser";
-import morgan from "morgan";
-// import mongoose from "mongoose";
+const express = require("express");
+const bodyParser = require("body-parser");
+const morgan = require("morgan");
+const cors = require("cors");
+// const mongoose = require("mongoose");
 
-// import products from "./routes/products";
-import bukalapak from "./routes/bukalapak";
-import tokopedia from "./routes/tokopedia";
+// const products = require("./routes/products");
+const bukalapak = require("./routes/bukalapak");
+const tokopedia = require("./routes/tokopedia");
+
+const handleCors = (req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, DELETE, OPTIONS"
+  );
+  res.setHeader(
+    "Access-Control-Allow-Headers",
+    "Origin, Authorization, X-Requested-With, Content-Type, Content-Length, Accept"
+  );
+  res.setHeader("Access-Control-Allow-Credentials", true);
+
+  if (req.method === "OPTIONS") {
+    return res.end();
+  }
+  return next();
+};
 
 const app = express();
 // mongoose.connect(
@@ -15,6 +34,8 @@ const app = express();
 //   }
 // );
 
+app.use(cors());
+app.use(handleCors);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("combined"));
@@ -22,7 +43,7 @@ app.use(morgan("combined"));
 app.use(bukalapak);
 app.use(tokopedia);
 
-export default {
+module.exports = {
   path: "/api",
   handler: app
 };

@@ -1,19 +1,19 @@
 import { stringify } from "qs";
 
-export default $axios => resource => ({
+export default $http => resource => ({
   store(payload) {
-    return $axios.$post(`/${resource}/`, payload);
+    return $http.$post(`/${resource}/`, payload);
   },
   show(id, params = {}) {
-    return $axios.$get(`/${resource}/${id}/?${stringify(params)}`);
+    return $http.$get(`/${resource}/${id}/?${stringify(params)}`);
   },
   index(params = {}) {
-    return $axios.$get(`/${resource}/?${stringify(params)}`);
+    return $http.$get(`/${resource}/?${stringify(params)}`);
   },
   update(id, payload) {
-    return $axios.$put(`/${resource}/${id}/`, payload);
+    return $http.$put(`/${resource}/${id}/`, payload);
   },
   delete(id) {
-    return $axios.$delete(`/${resource}/${id}`);
+    return $http.$delete(`/${resource}/${id}`);
   }
 });
