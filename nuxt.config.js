@@ -69,7 +69,8 @@ export default {
 
   http: {
     // proxy: true
-    baseURL: "http://localhost:3000/api"
+    baseURL: `http://${process.env.HOST || "localhost"}:${process.env.PORT ||
+      "3000"}/api`
   },
 
   // proxy: {
