@@ -30,7 +30,6 @@
       class="v-bottom-nav--custom"
       dark=""
       app=""
-      shift=""
       fixed=""
       color="primary"
     >

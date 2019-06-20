@@ -36,6 +36,7 @@
                 <v-autocomplete
                   v-model="selectedCategory"
                   :items="categories"
+                  :disabled="isLoading"
                   clearable=""
                   item-text="name"
                   return-object=""
@@ -54,8 +55,10 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import { types } from "~/store";
+import { storage } from "~/helpers/firebase";
+import uuid from "uuid/v4";
 
 export default {
   data() {
@@ -64,7 +67,8 @@ export default {
     };
   },
   computed: {
-    ...mapState(["categories"]),
+    ...mapState(["user", "categories"]),
+    ...mapGetters(["isAuth"]),
     img: {
       get() {
         return this.$store.state.img;
@@ -100,6 +104,7 @@ export default {
       }
     },
     onRetake() {
+      this.img = null;
       this.$router.replace({ name: "index" });
     },
     async onChoose() {
@@ -111,23 +116,29 @@ export default {
       this.$http.setHeader("Content-Type", "application/json", ["post"]);
       try {
         this.isLoading = true;
-        const { responses } = await this.$http.$post(
-          "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyB5gwh0vSoNiFCSlRD7X_U032goTVe42ZQ",
-          {
-            requests: [
+        // const { responses } = await ;
+        const [{ responses }] = await Promise.all(
+          [
+            this.$http.$post(
+              "https://vision.googleapis.com/v1/images:annotate?key=AIzaSyB5gwh0vSoNiFCSlRD7X_U032goTVe42ZQ",
               {
-                image: {
-                  content: base64String
-                },
-                features: [
+                requests: [
                   {
-                    type: "LABEL_DETECTION",
-                    maxResults: 10
+                    image: {
+                      content: base64String
+                    },
+                    features: [
+                      {
+                        type: "LABEL_DETECTION",
+                        maxResults: 10
+                      }
+                    ]
                   }
                 ]
               }
-            ]
-          }
+            )
+          ],
+          this.uploadStorage()
         );
         if (responses.length > 0) {
           const { labelAnnotations } = responses[0];
@@ -153,6 +164,26 @@ export default {
           this.imgLabel = translationResult;
           this.$router.push({ name: "image-result" });
         }
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    async uploadStorage() {
+      try {
+        this.isLoading = true;
+        if (!this.isAuth) {
+          return;
+        }
+        const imagesRef = storage.ref();
+        const snapshot = await imagesRef
+          .child(`images/${this.user.uid}/${uuid()}.jpg`)
+          .putString(this.img, "data_url");
+        console.log(snapshot);
+        const url = await snapshot.ref.getDownloadURL();
+        console.log(url);
+        return snapshot;
       } catch (error) {
         console.log(error);
       } finally {

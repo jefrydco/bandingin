@@ -69,7 +69,7 @@ export default {
 
   http: {
     // proxy: true
-    baseURL: "http://localhost:3001/api"
+    baseURL: "http://localhost:3000/api"
   },
 
   // proxy: {
@@ -97,7 +97,7 @@ export default {
   // https://nuxtjs.org/api/configuration-watch
   watch: ["~/mixins/**/*.js"],
 
-  // serverMiddleware: ["~/api/index"],
+  serverMiddleware: ["~/api/index"],
 
   // https://nuxtjs.org/api/configuration-build
   build: {

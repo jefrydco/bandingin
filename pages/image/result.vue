@@ -155,10 +155,12 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 import qs from "qs";
 import truncate from "truncate";
 import { types } from "~/store";
+import { db } from "~/helpers/firebase";
+import uuid from "uuid/v4";
 
 export default {
   data() {
@@ -172,7 +174,8 @@ export default {
     };
   },
   computed: {
-    ...mapState(["categories"]),
+    ...mapState(["categories", "user"]),
+    ...mapGetters(["isAuth"]),
     imgLabel: {
       get() {
         return this.$store.state.imgLabel;
@@ -229,11 +232,14 @@ export default {
           // eslint-disable-next-line
           const [keyword, secondKeyword, ...rest] = imgLabel;
           const kw = `${keyword.description} & ${secondKeyword.description}`;
-          this.getProducts({
+          const payload = {
             category: this.selectedCategory ? this.selectedCategory.value : "",
             keyword: kw.toLowerCase()
-          });
-          // this.getProducts(keyword.translations[0].translatedText);
+          };
+          this.getProducts(payload);
+          if (this.isAuth) {
+            this.createHistory(payload);
+          }
           this.keyword = kw;
         }
       },
@@ -257,14 +263,30 @@ export default {
       string = string.toString();
       return truncate(string, maxLength);
     },
-    async getProducts(keyword) {
+    async getProducts(payload) {
       try {
         this.isLoading = true;
-        const queryString = qs.stringify(keyword);
+        const queryString = qs.stringify(payload);
         const {
           data: { products = [] }
         } = await this.$http.$get(`bukalapak?${queryString}`);
         this.products = products;
+      } catch (error) {
+        console.log(error);
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    async createHistory(payload) {
+      try {
+        this.isLoading = true;
+        const historyRef = db
+          .collection("users")
+          .doc(this.user.uid)
+          .collection("histories")
+          .doc(uuid());
+
+        await historyRef.set(payload, { merge: true });
       } catch (error) {
         console.log(error);
       } finally {

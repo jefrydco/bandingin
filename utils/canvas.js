@@ -1,8 +1,8 @@
-import { ulid } from "ulid";
+import uuid from "uuid/v4";
 
 export const getImageFromCanvas = (
   canvas,
-  filename = ulid(),
+  filename = uuid(),
   mime = "image/jpeg",
   quality = 1
 ) => {
