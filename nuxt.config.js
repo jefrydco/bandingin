@@ -69,8 +69,7 @@ export default {
 
   http: {
     // proxy: true
-    baseURL: `http://${process.env.HOST || "localhost"}:${process.env.PORT ||
-      "3000"}/api`
+    baseURL: `https://bandingin.herokuapp.com/api`
   },
 
   // proxy: {
