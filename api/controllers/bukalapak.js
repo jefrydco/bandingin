@@ -45,7 +45,9 @@ const index = async (req, res) => {
   });
   return res.json({
     ...response,
-    data
+    data: {
+      products: data.products.map(datum => ({ ...datum, source: "Bukalapak" }))
+    }
   });
 };
 

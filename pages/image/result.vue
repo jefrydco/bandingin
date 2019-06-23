@@ -29,6 +29,7 @@
                   {{ truncate(product.name, 30) }}
                 </h2>
                 <div>Rp. {{ product.price }}</div>
+                <div>{{ product.source }}</div>
               </v-card-text>
             </v-responsive>
           </v-card>
@@ -268,6 +269,7 @@ export default {
   },
   methods: {
     init() {
+      console.log(this.selectedCategory);
       this.getProducts({
         category: this.selectedCategory ? this.selectedCategory.value : "",
         keyword: this.keyword
