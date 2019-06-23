@@ -31,7 +31,7 @@ export default {
     "@nuxtjs/pwa",
 
     // https://github.com/nuxt-community/moment-module
-    "@nuxtjs/moment",
+    ["@nuxtjs/moment", ["id"]],
 
     // https://github.com/nuxt-community/sentry-module
     // "@nuxtjs/sentry",
@@ -69,7 +69,8 @@ export default {
 
   http: {
     // proxy: true
-    baseURL: `https://bandingin.herokuapp.com/api`
+    // baseURL: `https://bandingin.herokuapp.com/api`
+    baseURL: "http://localhost:5000/api"
   },
 
   // proxy: {

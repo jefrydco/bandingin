@@ -180,8 +180,11 @@ export default {
         const snapshot = await imagesRef
           .child(`images/${this.user.uid}/${uuid()}.jpg`)
           .putString(this.img, "data_url");
-        console.log(snapshot);
         const url = await snapshot.ref.getDownloadURL();
+        await this.$store.commit(types.SET_IMG_META, {
+          location: snapshot.metadata.fullPath,
+          url
+        });
         console.log(url);
         return snapshot;
       } catch (error) {

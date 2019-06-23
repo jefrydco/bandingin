@@ -159,23 +159,31 @@ import { mapState, mapGetters } from "vuex";
 import qs from "qs";
 import truncate from "truncate";
 import { types } from "~/store";
-import { db } from "~/helpers/firebase";
+import { db, Timestamp } from "~/helpers/firebase";
 import uuid from "uuid/v4";
 
 export default {
   data() {
     return {
       isLoading: false,
-      keyword: "",
       sortList: [
         { text: "Termurah", value: "price:asc" },
         { text: "Termahal", value: "price:desc" }
-      ]
+      ],
+      payload: null
     };
   },
   computed: {
-    ...mapState(["categories", "user"]),
+    ...mapState(["categories", "user", "imgMeta"]),
     ...mapGetters(["isAuth"]),
+    keyword: {
+      get() {
+        return this.$store.state.keyword;
+      },
+      set(keyword) {
+        this.$store.commit(types.SET_KEYWORD, keyword);
+      }
+    },
     imgLabel: {
       get() {
         return this.$store.state.imgLabel;
@@ -232,18 +240,26 @@ export default {
           // eslint-disable-next-line
           const [keyword, secondKeyword, ...rest] = imgLabel;
           const kw = `${keyword.description} & ${secondKeyword.description}`;
-          const payload = {
+          this.payload = {
             category: this.selectedCategory ? this.selectedCategory.value : "",
             keyword: kw.toLowerCase()
           };
-          this.getProducts(payload);
-          if (this.isAuth) {
-            this.createHistory(payload);
-          }
+          this.getProducts(this.payload);
           this.keyword = kw;
         }
       },
       immediate: true
+    },
+    imgMeta(meta) {
+      if (meta) {
+        const payload = {
+          ...this.payload,
+          ...meta,
+          created_at: Timestamp.fromDate(new Date())
+        };
+        console.log(payload);
+        this.createHistory(payload);
+      }
     }
   },
   mounted() {
@@ -252,9 +268,10 @@ export default {
   },
   methods: {
     init() {
-      if (this.imgLabel.length === 0) {
-        this.$router.replace({ name: "index" });
-      }
+      this.getProducts({
+        category: this.selectedCategory ? this.selectedCategory.value : "",
+        keyword: this.keyword
+      });
     },
     truncate(string, maxLength) {
       if (!string) {
@@ -304,6 +321,17 @@ export default {
         keyword: this.keyword.toLowerCase(),
         sort_by: this.selectedSort
       });
+      if (this.isAuth) {
+        const payload = {
+          category: this.selectedCategory ? this.selectedCategory.value : "",
+          keyword: this.keyword ? this.keyword.toLowerCase() : "",
+          fullPath: "",
+          url: "",
+          created_at: Timestamp.fromDate(new Date())
+        };
+        console.log(payload);
+        this.createHistory(payload);
+      }
     },
     onApplyFilter() {
       // https://www.bukalapak.com/products/?search%5Bassurance%5D=0&search%5Bbrand%5D=0&search%5Bcity%5D=&search%5Bfree_shipping_coverage%5D=&search%5Binstallment%5D=0&search%5Bkeyword%5D=headphones&search%5Bkeywords%5D=headphones&search%5Bnew%5D=1&search%5Bpremium_seller%5D=0&search%5Bprice_max%5D=&search%5Bprice_min%5D=&search%5Bprovince%5D=&search%5Brating_gte%5D=0&search%5Brating_lte%5D=5&search%5Bsort_by%5D=price%3Aasc&search%5Btodays_deal%5D=0&search%5Btop_seller%5D=0&search%5Bused%5D=1&search%5Bwholesale%5D=0&&

@@ -62,6 +62,7 @@
     "nuxt-webfontloader": "^1.0.0",
     "qs": "^6.7.0",
     "scrape-it": "^5.1.4",
+    "titleize": "^2.1.0",
     "truncate": "^2.1.0",
     "uuid": "^3.3.2",
     "vee-validate": "^2.2.4",
