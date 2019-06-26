@@ -108,8 +108,8 @@
 
 <script>
 import titleize from "titleize";
-import { types } from "~/store";
 import { mapState, mapGetters } from "vuex";
+import { types } from "~/store";
 import { GoogleAuthProvider, auth, db } from "~/helpers/firebase";
 
 export default {

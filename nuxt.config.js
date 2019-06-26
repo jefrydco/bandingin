@@ -69,10 +69,12 @@ export default {
 
   http: {
     // proxy: true
-    baseURL: `https://bandingin.herokuapp.com/api`
-    // baseURL: `http://localhost:${process.env.PORT_API ||
-    //   parseInt(process.env.PORT) + 1 ||
-    //   3000}/api`
+    baseURL:
+      process.env.NODE_ENV !== "production"
+        ? `http://localhost:${process.env.PORT_API ||
+            parseInt(process.env.PORT) + 1 ||
+            3000}/api`
+        : `https://bandingin.herokuapp.com/api`
   },
 
   // proxy: {
@@ -90,12 +92,11 @@ export default {
     "~/plugins/api",
     "~/plugins/components",
     "~/plugins/vuetify",
-    "~/plugins/vee-validate",
-    "~/plugins/components.client"
+    "~/plugins/vee-validate"
   ],
 
   // https://nuxtjs.org/api/configuration-css
-  css: ["~/assets/styles/vuetify"],
+  css: ["~/assets/styles/vuetify", "~/assets/styles/main"],
 
   // https://nuxtjs.org/api/configuration-watch
   watch: ["~/mixins/**/*.js"],

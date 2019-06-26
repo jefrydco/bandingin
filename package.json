@@ -67,7 +67,6 @@
     "uuid": "^3.3.2",
     "vee-validate": "^2.2.4",
     "vue-friendly-iframe": "^0.12.0",
-    "vue-web-cam": "^1.5.0",
     "vuejs-logger": "^1.5.3",
     "vuetify": "^1.5.13",
     "vuetify-loader": "^1.2.2"

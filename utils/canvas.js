@@ -1,4 +1,4 @@
-import uuid from "uuid/v4";
+const uuid = require("uuid/v4");
 
 export const getImageFromCanvas = (
   canvas,
@@ -25,10 +25,12 @@ export const drawImage = (
   y,
   width = img.width,
   height = img.height,
-  deg,
-  isFlip = false,
-  isFlop = false,
-  isCenter = false
+  { deg = 0, isFlip = false, isFlop = false, isCenter = false } = {
+    deg: 0,
+    isFlip: false,
+    isFlop: false,
+    isCenter: false
+  }
 ) => {
   context.save();
 

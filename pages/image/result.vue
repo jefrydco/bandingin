@@ -159,9 +159,9 @@
 import { mapState, mapGetters } from "vuex";
 import qs from "qs";
 import truncate from "truncate";
+import uuid from "uuid/v4";
 import { types } from "~/store";
 import { db, Timestamp } from "~/helpers/firebase";
-import uuid from "uuid/v4";
 
 export default {
   data() {

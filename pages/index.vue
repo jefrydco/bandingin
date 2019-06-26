@@ -5,26 +5,27 @@
         <v-layout row="" wrap="">
           <v-flex xs12="">
             <v-card flat="" dark="" color="black">
-              <v-card-text class="pa-0 fill-height">
-                <no-ssr>
-                  <vue-web-cam
-                    ref="webcam"
-                    :device-id="deviceId"
-                    height="100%"
-                    width="100%"
-                    @started="onStarted"
-                    @stopped="onStopped"
-                    @error="onError"
-                    @cameras="onCameras"
-                    @camera-change="onCameraChange"
-                  />
-                </no-ssr>
+              <v-card-text class="pa-0 fill-height mb-3">
+                <video
+                  id="live-video"
+                  ref="liveVideo"
+                  width="720"
+                  height="540"
+                  autoplay=""
+                  style="display: none"
+                />
+                <canvas
+                  id="live-canvas"
+                  ref="liveCanvas"
+                  width="720"
+                  height="540"
+                />
               </v-card-text>
             </v-card>
             <v-select
-              :items="devices"
-              v-model="camera"
-              label="Devices"
+              :items="cameras"
+              v-model="selectedCamera"
+              label="Camera"
               item-text="label"
               item-value="deviceId"
               hide-details=""
@@ -60,71 +61,39 @@
       </v-flex>
     </v-layout>
   </app-container>
-  <!-- <v-container fluid="" grid-list-xl="">
-    <v-layout row="" wrap="">
-      <v-flex xs12="" sm6="">
-        <no-ssr>
-          <vue-web-cam
-            ref="webcam"
-            :device-id="deviceId"
-            width="100%"
-            @started="onStarted"
-            @stopped="onStopped"
-            @error="onError"
-            @cameras="onCameras"
-            @camera-change="onCameraChange"
-          />
-        </no-ssr>
-      </v-flex>
-      <v-flex xs12="" sm6="">
-        <v-img :src="img" :aspect-ratio="1">
-          <template #placeholder="">
-            <v-layout fill-height="" align-center="" justify-center="" ma-0="">
-              <v-progress-circular indeterminate="" color="grey lighten-5" />
-            </v-layout>
-          </template>
-        </v-img>
-      </v-flex>
-    </v-layout>
-    <v-layout row="" wrap="">
-      <v-flex xs12="" sm3="">
-        <v-select
-          :items="devices"
-          v-model="camera"
-          label="Devices"
-          item-text="label"
-          item-value="deviceId"
-          box=""
-        />
-      </v-flex>
-      <v-btn @click="onCapture">Capture</v-btn>
-      <v-btn @click="onStop">Stop</v-btn>
-      <v-btn @click="onStart">Start</v-btn>
-    </v-layout>
-  </v-container> -->
 </template>
 
 <script>
 import isPng from "is-png";
 import isJpg from "is-jpg";
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 import { getImageFromCanvas, drawImage } from "~/utils/canvas";
 import { getBase64 } from "~/utils/files";
 import { types } from "~/store";
+import { types as cameraTypes } from "~/store/camera";
 
 export default {
   data() {
     return {
       camera: null,
-      deviceId: null,
+      interval: null,
       devices: []
     };
   },
   computed: {
     ...mapState(["categories"]),
-    device() {
-      return this.devices.find(n => n.deviceId === this.deviceId);
+    ...mapState("camera", ["cameras"]),
+    selectedCamera: {
+      get() {
+        return this.$store.state.camera.selectedCamera;
+      },
+      set(selectedCamera) {
+        this.$store.commit(
+          `camera/${cameraTypes.SET_SELECTED_CAMERA}`,
+          selectedCamera
+        );
+      }
     },
     img: {
       get() {
@@ -144,69 +113,61 @@ export default {
     }
   },
   watch: {
-    camera(id) {
-      this.deviceId = id;
-    },
-    devices(devices) {
-      // Once we have a list select the first one
-      // eslint-disable-next-line
-      const [first, ...tail] = devices;
-      if (first) {
-        this.camera = first.deviceId;
-        this.deviceId = first.deviceId;
-      }
+    selectedCamera(selectedCamera) {
+      this.initCamera(selectedCamera);
     }
   },
   mounted() {
     this.init();
   },
   methods: {
-    init() {
+    ...mapActions("camera", ["startCamera", "stopCamera", "getCameras"]),
+    async init() {
       this.initFile();
+      await this.getCameras();
+      await this.initCamera(this.selectedCamera);
     },
     initFile() {
       this.$refs.file.value = null;
     },
-    onCapture() {
-      const img = this.$refs.webcam.capture();
-      let flippedImg = null;
-      const canvasEl = document.createElement("canvas");
-      canvasEl.width = 720;
-      canvasEl.height = 540;
-      const ctx = canvasEl.getContext("2d");
-      const imgEl = document.createElement("img");
-      imgEl.onload = async () => {
-        drawImage(ctx, imgEl, 0, 0, 720, 540, 0, true, false);
-        flippedImg = await getImageFromCanvas(canvasEl);
-        const base64 = await getBase64(flippedImg);
-        this.img = base64;
-        await this.$router.push({ name: "image" });
-      };
-      imgEl.src = img;
+    async initCamera(deviceId) {
+      try {
+        const videoStream = await this.startCamera(deviceId);
+        const video = this.$refs.liveVideo;
+        const canvas = this.$refs.liveCanvas;
+        const canvasCtx = canvas.getContext("2d");
+        video.srcObject = videoStream;
+
+        if (this.interval) {
+          clearInterval(this.interval);
+        }
+
+        this.interval = setInterval(() => {
+          drawImage(canvasCtx, video, 0, 0, 720, 540, { isFlip: true });
+        }, 1000 / 60);
+      } catch (error) {
+        console.log(error);
+      }
     },
-    onStarted(stream) {
-      console.log("On Started Event", stream);
-    },
-    onStopped(stream) {
-      console.log("On Stopped Event", stream);
-    },
-    onStop() {
-      this.$refs.webcam.stop();
-    },
-    onStart() {
-      this.$refs.webcam.start();
-    },
-    onError(error) {
-      console.log("On Error Event", error);
-    },
-    onCameras(cameras) {
-      this.devices = cameras;
-      console.log("On Cameras Event", cameras);
-    },
-    onCameraChange(deviceId) {
-      this.deviceId = deviceId;
-      this.camera = deviceId;
-      console.log("On Camera Change Event", deviceId);
+    async onCapture() {
+      const canvas = this.$refs.liveCanvas;
+      const image = await getImageFromCanvas(canvas);
+      const base64 = await getBase64(image);
+      this.img = base64;
+      await this.$router.push({ name: "image" });
+      // const imgEl = document.createElement("img");
+      // imgEl.onload = async () => {
+      //   drawImage(ctx, imgEl, 0, 0, 720, 540, {
+      //     deg: 0,
+      //     isFlip: true,
+      //     isFlop: false
+      //   });
+      //   flippedImg = await getImageFromCanvas(canvas);
+      //   const base64 = await getBase64(flippedImg);
+      //   this.img = base64;
+      //   await this.$router.push({ name: "image" });
+      // };
+      // imgEl.src = img;
     },
     onChooseImage() {
       this.$refs.file.click();

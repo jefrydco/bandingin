@@ -12,8 +12,8 @@
 </template>
 
 <script>
-import { types } from "~/store";
 import VueFriendlyIframe from "vue-friendly-iframe";
+import { types } from "~/store";
 
 export default {
   components: {

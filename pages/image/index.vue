@@ -56,9 +56,9 @@
 
 <script>
 import { mapState, mapGetters } from "vuex";
+import uuid from "uuid/v4";
 import { types } from "~/store";
 import { storage } from "~/helpers/firebase";
-import uuid from "uuid/v4";
 
 export default {
   data() {
