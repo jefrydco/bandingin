@@ -28,7 +28,14 @@
                 <h2 class="subheading" style="height: 100px">
                   {{ truncate(product.name, 30) }}
                 </h2>
-                <div>Rp. {{ product.price }}</div>
+                <div>
+                  {{
+                    new Intl.NumberFormat("id-ID", {
+                      style: "currency",
+                      currency: "IDR"
+                    }).format(product.price)
+                  }}
+                </div>
                 <div>{{ product.source }}</div>
               </v-card-text>
             </v-responsive>
@@ -160,6 +167,7 @@ import { mapState, mapGetters } from "vuex";
 import qs from "qs";
 import truncate from "truncate";
 import uuid from "uuid/v4";
+import arrayShuffle from "array-shuffle";
 import { types } from "~/store";
 import { db, Timestamp } from "~/helpers/firebase";
 
@@ -286,9 +294,23 @@ export default {
       try {
         this.isLoading = true;
         const queryString = qs.stringify(payload);
-        const {
-          data: { products = [] }
-        } = await this.$http.$get(`bukalapak?${queryString}`);
+        const [
+          { products: bukalapak = [] },
+          { products: jdid = [] },
+          { products: elevania = [] }
+        ] = await Promise.all([
+          this.$http.$get(`bukalapak?${queryString}`),
+          this.$http.$get(`jdid?${queryString}`),
+          this.$http.$get(`elevania?${queryString}`)
+        ]);
+        let products = bukalapak.concat(jdid).concat(elevania);
+        if (payload.sort_by && payload.sort_by.includes("asc")) {
+          products = products.sort((a, b) => a.price - b.price);
+        } else if (payload.sort_by && payload.sort_by.includes("desc")) {
+          products = products.sort((a, b) => b.price - a.price);
+        } else {
+          products = arrayShuffle(products);
+        }
         this.products = products;
       } catch (error) {
         console.log(error);

@@ -6,7 +6,8 @@ const cors = require("cors");
 
 // const products = require("./routes/products");
 const bukalapak = require("./routes/bukalapak");
-const tokopedia = require("./routes/tokopedia");
+const jdid = require("./routes/jdid");
+const elevania = require("./routes/elevania");
 
 const handleCors = (req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -41,7 +42,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan("combined"));
 // app.use(products);
 app.use(bukalapak);
-app.use(tokopedia);
+app.use(jdid);
+app.use(elevania);
 
 module.exports = {
   path: "/api",

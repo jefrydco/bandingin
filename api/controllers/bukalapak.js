@@ -28,7 +28,12 @@ const index = async (req, res) => {
       listItem: ".product-card",
       data: {
         name: ".product__name",
-        price: ".product-price .amount",
+        price: {
+          selector: ".product-price .amount",
+          convert(value) {
+            return parseInt(value.replace(/\D/g, ""));
+          }
+        },
         link: {
           selector: ".product-media__link",
           attr: "href",
@@ -44,10 +49,12 @@ const index = async (req, res) => {
     }
   });
   return res.json({
-    ...response,
-    data: {
-      products: data.products.map(datum => ({ ...datum, source: "Bukalapak" }))
-    }
+    products: data.products
+      .filter(
+        ({ name, price, link, image }) =>
+          name.length !== 0 || link.length !== 0 || image.length !== 0
+      )
+      .map(datum => ({ ...datum, source: "Bukalapak" }))
   });
 };
 
