@@ -54,7 +54,7 @@
     "firebase": "^6.2.0",
     "is-jpg": "^2.0.0",
     "is-png": "^2.0.0",
-    "lru-cache": "^4.1.5",
+    "lru-cache": "^6.0.0",
     "moment": "^2.24.0",
     "mongoose": "^5.5.3",
     "morgan": "^1.9.1",
