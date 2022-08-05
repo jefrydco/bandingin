@@ -56,7 +56,7 @@
     "is-png": "^2.0.0",
     "lru-cache": "^4.1.5",
     "moment": "^2.24.0",
-    "mongoose": "^5.5.3",
+    "mongoose": "^5.7.5",
     "morgan": "^1.9.1",
     "nodemon": "^1.19.1",
     "nuxt": "^2.6.2",
